@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Policy-conditioned Environment Models are more Generalizable.">
+  <meta name="keywords" content="Reinforcement Learning, Model-based RL, Environment Model Learning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Policy-conditioned Environment Models are more Generalizable</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script> -->
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Policy-conditioned Models are More Generalizable</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://www.lamda.nju.edu.cn/chenrf/">Ruifeng Chen</a><sup>1,2</sup>,</span>
+            <span class="author-block">
+              <a href="https://xionghuichen.github.io/">Xiong-Hui Chen</a><sup>1,2</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.yihaosun.cn/">Yihao Sun</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://github.com/SiyuanXiao">Siyuan Xiao</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.lamda.nju.edu.cn/limh/">Minhui Li</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.wolai.com/eyounx/dtR1MTyRXS5tP5Cex4KtdK">Yang Yu</a><sup>1,2</sup>,
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>National Key Laboratory for Novel Software Technology, Nanjing University
+              & School of Artificial Intelligence, Nanjing University,</span>
+            <span class="author-block"><sup>2</sup>Polixir Technologies</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://openreview.net/pdf?id=g9mYBdooPA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/xionghuichen/policy-conditioned-model"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a>
+            </div> -->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- <section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/teaser.mp4"
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
+        free-viewpoint
+        portraits.
+      </h2>
+    </div>
+  </div>
+</section> -->
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <a name="pipeline"></a>
+<center>
+  
+  <img src="./static/images/pipeline.jpg"
+           class="interpolation-image"
+           style="max-width: 100%;"
+           alt="."/>
+           <p><b>Figure 1:  An illustration of the difference between the development pipeline of policy-agnostic models (left) and policy-conditioned models (right).</b>
+             
+            Suppose we wish to learn an environment where a biped robot is asked to move forward from an offline dataset including different locomotion patterns, such as jumping, walking, running, etc. 
+            Different locomotion patterns usually correspond to quite different transition patterns even though they can be regarded as a single task.
+          
+         </p>
+ </center>
+
+<!-- <section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-steve">
+          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/steve.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-chair-tp">
+          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/chair-tp.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-shiba">
+          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/shiba.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-fullbody">
+          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/fullbody.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-blueshirt">
+          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/blueshirt.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-mask">
+          <video poster="" id="mask" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/mask.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-coffee">
+          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/coffee.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-toby">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/toby2.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            In reinforcement learning, it is crucial to have an accurate environment dynamics model to evaluate different policies' value in downstream tasks like offline policy optimization and policy evaluation. 
+            However, the learned model is known to be inaccurate in predictions when evaluating target policies different from data-collection policies. 
+            In this work, we found that utilizing policy representation for model learning, called policy-conditioned model (PCM) learning, is useful to mitigate the problem, especially when the offline dataset is collected from diversified behavior policies. 
+            The reason beyond that is in this case, PCM becomes a meta-dynamics model that is trained to be aware of and focus on the evaluation policies that on-the-fly adjust the model to be suitable to the evaluation policies’ state-action distribution, thus improving the prediction accuracy. 
+            Based on that intuition, we propose an easy-to-implement yet effective algorithm of PCM for accurate model learning. 
+            We also give a theoretical analysis and experimental evidence to demonstrate the feasibility of reducing value gaps by adapting the dynamics model under different policies. 
+            Experiment results show that PCM outperforms the existing SOTA off-policy evaluation methods in the DOPE benchmark by a large margin, and derives significantly better policies in offline policy selection and model predictive control compared with the standard model learning method.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+    <div class="container is-max-desktop">
+      <div class="columns is-centered  has-text-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Video</h2>
+  
+          <!-- Interpolating. -->
+          <!-- <h3 class="title is-4">Interpolating states</h3> -->
+          <div class="content has-text-justified">
+            <!-- <p>
+              We can also animate the scene by interpolating the deformation latent codes of two input
+              frames. Use the slider here to linearly interpolate between the left frame and the right
+              frame.
+            </p> -->
+          </div>
+          <div class="columns is-centered interpolation-panel">
+            <div class="column is-4 has-text-centered">
+              <video id="teaser" autoplay loop muted controls style="max-width: 100%;">
+                <source src="./static/videos/halfcheetah-medium-replay-v2_ckpt-10001_10.mp4"
+                        type="video/mp4">
+              </video>
+              <img src="./static/images/hfc_b_10001_2.jpg"
+                   class="interpolation-image"
+                   alt="Interpolate start reference image."/>
+              <p>10k-th iteration</p>
+            </div>
+            <div class="column is-4 has-text-centered">
+              <video id="teaser" autoplay loop muted controls style="max-width: 100%;">
+                <source src="./static/videos/halfcheetah-medium-replay-v2_ckpt-30001_10.mp4"
+                        type="video/mp4">
+              </video>
+              <img src="./static/images/hfc_g_30001_5.jpg"
+                   class="interpolation-image"
+                   alt="Interpolation end reference image."/>
+              <p class="is-bold">30k-th iteration </p>
+            </div>
+            <div class="column is-4 has-text-centered">
+              <video id="teaser" autoplay loop muted controls  style="max-width: 100%;">
+                <source src="./static/videos/halfcheetah-medium-replay-v2_ckpt-50001_10.mp4"
+                        type="video/mp4">
+              </video>
+              <img src="./static/images/hfc_g_50001_2.jpg"
+                   class="interpolation-image"
+                   alt="Interpolation end reference image."/>
+              <p class="is-bold">50k-th iteration </p>
+            </div>
+          </div>
+          <p>
+            We visualize the rollout trajectories of an expert policy within the learned policy-conditioned models at different checkpoints during training (above),
+             and their corresponding embedding visualization of trajectories with different performance (below). 
+             Notice that as the training progresses, the model predictions become more accurate and the embedding distribution exhibits clustering tendency.
+          </p>
+          <br/>
+        </div>
+      </div>
+    <!-- Paper video. -->
+    <!-- <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Video</h2>
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div> -->
+    <!--/ Paper video. -->
+  </div>
+</section>
+
+<section>
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <h2 class="title is-3">Method: Policy-conditioned Models </h2>
+    </div>
+    <hr class="rounded">
+
+    <h3 class="title is-4">A. Value Gaps between True Dynamics and a Learned Model </h3>
+
+      <div class="content has-text-justified">
+        <p>The value gaps between true dynamcis \(T^*\) and a learned model \(\hat T\) is upper bounded by
+          $$ |V^\pi_{T^*} - V^\pi_{\hat T}| \leq \frac{2\gamma R_{\max}}{(1-\gamma)^2}l(\textcolor{red}{\pi}, T^*, \hat T) $$
+          where \( l(\pi,T^*,\hat T)=\mathbb E_{s,a\sim\rho^\pi}D_{TV}(T^*(\cdot|s,a),\hat T(\cdot|s,a)) \) is the model error under the visitation distribution of the target policy \(\pi\).
+          This implies that as long as we reduce the model error under the target policy's distribution \(\rho^\pi\), we can guarantee the reduce of the corresponding value gaps.
+
+          However, since the target policy's visitation distirbution is not directly accessible, previous work  
+            (<a href="https://arxiv.org/abs/1906.08253">Janner 2019</a>)
+          further relaxes the bound to the model error under training distribution:
+
+          $$ |V^\pi_{T^*} - V^\pi_{\hat T}| \leq \frac{2\gamma R_{\max}}{(1-\gamma)^2}l(\textcolor{red}{\mathcal D}, T^*, \hat T) +\frac{4R_{\max}}{(1-\gamma)^2}\sum_{i=1}^n w_i\max_s D_{TV}(\pi(\cdot|s),\mu_i(\cdot|s)) $$
+          where \( l(\pi,T^*,\hat T)=\mathbb E_{s,a\sim\mathcal D}D_{TV}(T^*(\cdot|s,a),\hat T(\cdot|s,a)) \) is the model error under the training data distribution \(\mathcal D\), and the training data are collected by a set of behavior policies \(\{\mu_i\}_{i=1}^n\), with corresponding propotion \(w_i\). 
+          This intorduces additional policy divergence terms, irrevalent to the learned dynamics model, which just suggests minimizing the training training model error but ignores the dynamcis model's generalization to the target policies.
+          <br>
+          In contrast, we explicitly consider the dynamics model's generalization to different policies via a meta optimization formulation by conditioning the dynamics models on policies.
+        </p>
+        <!-- <center>
+        <img src="./static/images/example-dt.jpg"
+                  class="interpolation-image"
+                  alt="."/>
+        <p> <b>Illustration of the motivation example and Demonstration Transformer Architecture for imitator policy \(\Pi). </b> (a) Illustration of how humans achieve OSIL under unforeseen changes; (b) The demonstration transformer architecture for the actor. 
+        \( [s^e_0, \ldots, s^e_i, \ldots, s^e_t] \) denote expert states
+        and \( [a^e_0, \ldots, a^e_i, \ldots, a^e_t] \) the expert action list.
+        \( s_j \) is the visited state of the actor at timestep \( j \).
+          We adopt \( \mathbf{q} \), \( \mathbf{k} \), and \( \mathbf{v} \) to denote the query, key, and value vectors of an attention module. 
+          \( N\times \) denotes an \( N \)-layer demo-attention module, which takes the output \( v'' \) of the last layer as the input \( q_j \) of the next layer. 
+          Note that the expert-state encoder and the visited state encoder shared the same weights.
+        </p>
+      </center> -->
+      </div>
+    
+    <h3 class="title is-4">B. Policy-conditioned Model Learning</h3>
+
+    <div class="content has-text-justified">
+       
+    <p>
+      Conventional dynamcis model learning ignores the data source of each experience trajectory and directly learns a model from the mixed dataset, which we name Policy-agnoistic Models (PAM). Instead we propose to learn Policy-Conditioned Models (PCM) to adapt to different policies:
+      $$
+      \hat F=\arg\min_{F\in\mathcal F}\sum_{i}w_i l(\mu_i,T^*,T_{F(\mu_i)}),
+      $$
+      here \(F\) is a policy-aware module mapping each policy to model parameters, optimized by minimizing the model error between true dyanmics \(T^*\) and the models \(T_{F(\mu_i)}\) conditioned on each behavior policy \(\mu_i\) within the dataset. 
+      <br>
+      In practice, we use a RNN-based encoder module \(q_\phi\) to implement this policy-aware module, trained altoghter with the policy-conditioned model and a policy decoder:
+      $$
+      \min_{\phi,\theta,\psi} \mathbb E_{t\sim[0,H-2],\tau^{(i)}_{0:t-1}\sim \mathcal D}[-\log T_\psi (s_{t+1}|s_t,a_t,q_\phi(\tau^{(j)}_{0:t-1}))-\lambda \mathcal R_\pi(q_\phi(\tau^{(j)}_{0:t-1}),\pi^{(j)},\theta)],
+      $$
+      where \(\mathcal R_{\pi}(q_\phi(\tau^{(j)}_{0:t-1}),\pi^{(j)},\theta)=\log p_\theta(a_t|s_t,q_\phi(\tau^{(j)}_{0:t-1}))\) is the policy reconstruction loss. 
+      The learned policy embeddings serve as contexts input into the policy-conditioned models together with the current state-action.
+      During evaluation, PCM recognizes the target policy's embedding on the fly, and adapts model to make more accurate predictions on the target distribution.
+      The overall development pipeline is illustrated in <a href="#pipeline"> Figure 1</a>.
+    </p>
+    
+    <!-- <center>
+      <img src="./static/images/itorl_setting.jpg"
+                class="interpolation-image"
+                alt="."/>
+      <p> <b>Illustration of the Training and Deploying Workflow for a Runtime One-shot imitator policy via context-based meta-RL.</b> 
+        <br />
+        <br />
+        <img src="./static/images/p_code.jpg"
+        class="interpolation-image"
+        style="max-width: 40%;"
+        alt="."/>
+        <p><b> Pseudo Code of the Training Process. </b> </p>
+      </center> -->
+  </div> 
+
+  <h3 class="title is-4">C. Policy-conditioned Models have Lower Generalization Error</h3>
+  We show that the adaptation to policies reduces the PCMs' generalization error compared to conventional PAMs:
+  $$
+        l(\pi,T^*,T_{\hat F(\pi)}) \leq 
+        \min_{\mu_i \in \Omega}\big\{\underbrace{l(\mu_i,T^*,T_{\hat F(\mu_i)})}_{\rm training~error} + \underbrace{L \cdot W_1(\rho^\pi, \rho^{\mu_i}) - C(\pi,\mu_i)}_{\rm generalization~error}\big\},
+  $$
+  where \(L\) is the Lipschitz constant of the dynamics model w.r.t. the state-action inputs, and the adaptation gain term \(C(\pi,\mu_i)\) is 
+  $$
+        C(\textcolor{blue}{\pi},\textcolor{red}{\mu_i}):=l(\textcolor{blue}{\pi},T^*,T_{\hat F(\textcolor{red}{\mu_i})}) - l(\textcolor{blue}{\pi},T^*,T_{\hat  F(\textcolor{blue}{\pi})}).
+  $$
+  This term summarizes the benefit brought by the policy adaptation effect, i.e., the reduced error of the target-policy-adapted model under the target distribution compared to that of the models trained under behavior policies.
+  <br>
+  We verify this adaptation gain empirically, showing positive gains within a resonable region around the dataset, which indicates the generalizability.
+  <br>
+  <center>
+    <img src="./static/images/gain.jpg"
+    class="interpolation-image"
+    style="max-width: 30%;"
+    alt=".">
+    <p>
+      <b>Figure 2. Illustrations of the adaptation gain of PCM</b> for different unseen policies \(\pi\), relative to a behavior policy \(\mu_i\).
+    </p>
+  </center>
+
+
+  </div>
+  </section>
+  <br>
+
+<section>
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <h2 class="title is-3">Experiments </h2>
+    </div>
+    <hr class="rounded">
+
+    <h3 class="title is-4">A. Off-policy Evaluation (OPE) </h3>
+    <p>
+      To evaluate the performance of different policies, we can roll out the policy within the learned dynamics models to obtain simulated trajectories.
+      We examine our PCMs in DOPE tasks and compare with sevaral OPE baselines, including model-free methods (FQE, DR, IS, DICE, and VPM) and model-based method using PAMs.
+      The performance is measured by three indicators, i.e., Absolute error, Rank correlation, and Regret. 
+      The results show our PCM outperforms all the baselines with a large margin.
+    </p>
+    <br>
+    <center>
+    <img src="./static/images/ope.jpg"
+    class="interpolation-image"
+    style="max-width: 90%;"
+    alt=".">
+    <p>
+      <b>Figure 3. The performance of OPE in three metrics.</b> To aggregate across tasks, we normalize the real policy values and evaluate policy values to range between 0 and 1. 
+      The error bars denote the standard errors among the tasks with three seeds.
+    </p>
+    <br>
+    </center>
+
+    <h3 class="title is-4">B. Offline Policy Selection (OPS) </h3>
+    <p>
+      We train MOPO for 1000 epochs and record policy snapshots at the latest 20 epochs for OPS tasks. 
+      We use different OPE methods to evaluate these policies and select the best one among them. 
+      The table shows the normalized performance gains by different methods. 
+      It is noteworthy that the gains of FQE and PAM are even lower than directly selecting the last-epoch policy.
+      In contrast, our approach shows a brilliant performance, implying that it reliably chooses a better policy for an offline RL algorithm to deploy.
+
+    </p>
+    <br>
+    <center>
+    <img src="./static/images/ops.jpg"
+    class="interpolation-image"
+    style="max-width: 80%;"
+    alt=".">
+    <p>
+      <b>Figure 4. Performance gain of offline policy selection for MOPO by different methods.</b>
+    </p>
+    <br>
+    </center>
+
+    <h3 class="title is-4">C. Model Predictive Control (MPC) </h3>
+    <p>
+      An accurate model can also be expected to perform effective model predictive control (MPC). We therefore compare our proposed PCM against PAM and the true dynamics.
+      We use the cross-entropy method (CEM) as the optimization technique in MPC, which samples actions form a distribution closer to previous action samples yielding high rewards.
+      Figure shows the cumulative rewards of the three methods during an episode, from which we can see that PCM performs similarly to the true dynamics and significantly outperforms PAM.
+      We track several planning processes and compute regret \(\sum_{i=t}^{t+T}\mathbb E_{T^*}[r(s_i,a_i^*)]-\sum_{i=t}^{t+T}\mathbb E_{T^*}[r(s_i,\hat a_i)]\) for both PAM and PCM, where \(\hat a_{t:t+T}\) and \(a^*_{t:t+T}\) are the optimal action sequences selected by the learned model and true dynamics respectively.
+      PCM has lower regret than PAM, meaning that our approach tends to pick out actions that are closer to the optimal policy.
+    </p>
+    <br>
+    <center>
+    <img src="./static/images/mpc.jpg"
+    class="interpolation-image"
+    style="max-width: 65%;"
+    alt=".">
+    <p>
+      <b>Figure 5. Performance and regret of MPC in HalfCheetah task.</b>
+      Left shows cumulative rewards within an episode in HalfCheetah. 
+      Right shows regrets of PAM and PCM during CEM, obtained by tracking several planning processes.
+    </p>
+    <br>
+    </center>
+
+    <h3 class="title is-4">D. Analysis of Learned Policy Representation </h3>
+    <p>
+      We conduct a study to verify whether the PCM can learn reasonable policy representations.
+      We select several policies with different performance and feed the trajectories generated by these policies into the policy encoder module of PCM.
+      We visualize the outputted policy representations via the t-SNE (<a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf">van der Maaten 2008</a>) technique in Fig. 6(a). 
+      We find that the policies with similar performance have similar policy representations since there is a degree of resemblance between their performed actions, 
+      while the representations of policies with widely different performance are far apart due to their quite different behavior. 
+      In contrast, the representations without the policy reconstruction loss are randomly distributed.
+      This result demonstrates that PCM can effectively identify similar policies and distinguish different policies.
+    </p>
+    <div class="columns is-centered">
+    <div class="column">
+      <!-- <h2 class="title is-3">Matting</h2> -->
+      <!-- <div class="columns is-centered"> -->
+        <div class="column content">
+          <img src="./static/images/ebd1.jpg"
+          class="interpolation-image"
+          style="max-width: 75%"
+          alt=".">
+
+        </div>
+      </div>
+
+      <div class="column">
+        <!-- <h2 class="title is-3">Matting</h2> -->
+        <!-- <div class="columns is-centered"> -->
+          <div class="column content">
+            <img src="./static/images/ebd2.jpg"
+            class="interpolation-image"
+            style="max-width: 75%"
+            alt=".">
+          </div>
+      </div>
+      </div>
+      <center>
+        <p>
+          <b>Figure 6. Visualization for policy representations of different policies learned by PCM in HalfCheetah. </b>Points are colored according to the normalized value.
+        </p>
+      </center>
+    </div>
+    
+  </div>
+
+  </div>
+</section>
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{
+      policyconditionedmodels,
+      title={Policy-conditioned Environment Models are More Generalizable},
+      author={Ruifeng Chen and Xiong-Hui Chen and Yihao Sun and Siyuan Xiao and Minhui Li and Yang Yu},
+      booktitle={Forty-first International Conference on Machine Learning},
+      year={2024},
+      url={https://openreview.net/forum?id=g9mYBdooPA}
+      }
+ </code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This webpage template was recycled from <a
+              href="https://github.com/nerfies/nerfies.github.io">here</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
