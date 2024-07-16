@@ -66,7 +66,7 @@
               <a href="https://www.lamda.nju.edu.cn/limh/">Minhui Li</a><sup>1</sup>,
             </span>
             <span class="author-block">
-              <a href="https://www.wolai.com/eyounx/dtR1MTyRXS5tP5Cex4KtdK">Yang Yu</a><sup>1,2</sup>,
+              <a href="https://www.wolai.com/eyounx/dtR1MTyRXS5tP5Cex4KtdK">Yang Yu</a><sup>1,2</sup>
             </span>
           </div>
 
@@ -256,7 +256,7 @@
           <div class="columns is-centered interpolation-panel">
             <div class="column is-4 has-text-centered">
               <video id="teaser" autoplay loop muted controls style="max-width: 100%;">
-                <source src="./static/videos/halfcheetah-medium-replay-v2_ckpt-10001_10.mp4.mp4"
+                <source src="./static/videos/hfc_mpc_ckpt-10001_rw-409.04944229674396.mp4.mp4"
                         type="video/mp4">
               </video>
               <img src="./static/images/hfc_b_10001_2.jpg"
@@ -266,7 +266,7 @@
             </div>
             <div class="column is-4 has-text-centered">
               <video id="teaser" autoplay loop muted controls style="max-width: 100%;">
-                <source src="./static/videos/halfcheetah-medium-replay-v2_ckpt-30001_10.mp4.mp4"
+                <source src="./static/videos/hfc_mpc_ckpt-30001_rw-704.5273281135953.mp4.mp4"
                         type="video/mp4">
               </video>
               <img src="./static/images/hfc_g_30001_5.jpg"
@@ -276,7 +276,7 @@
             </div>
             <div class="column is-4 has-text-centered">
               <video id="teaser" autoplay loop muted controls  style="max-width: 100%;">
-                <source src="./static/videos/halfcheetah-medium-replay-v2_ckpt-50001_10.mp4.mp4"
+                <source src="./static/videos/hfc_mpc_ckpt-50001_rw-1202.6022668293533.mp4.mp4"
                         type="video/mp4">
               </video>
               <img src="./static/images/hfc_g_50001_2.jpg"
@@ -286,9 +286,9 @@
             </div>
           </div>
           <p>
-            We visualize the rollout trajectories of an expert policy within the learned policy-conditioned models at different checkpoints during training (above),
-             and their corresponding embedding visualization of trajectories with different performance (below). 
-             Notice that as the training progresses, the model predictions become more accurate and the embedding distribution exhibits clustering tendency.
+            We visualize the decision trajectories of MPC agents planned within the learned policy-conditioned models at different checkpoints during training (above),
+             and the models' embedding visualization of trajectories with different performance (below). 
+             Notice that as the training progresses, the planning results achieve significantly better performance and the embedding distribution exhibits clustering tendency.
           </p>
           <br/>
         </div>
